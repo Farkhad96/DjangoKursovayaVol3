@@ -53,3 +53,6 @@ celery -A config beat -l info
 coverage run --source='.' manage.py test
 coverage report
 ```
+## Вопросы и ответы
+Этот раздел пока пустой
+
