@@ -7,6 +7,5 @@ python-dotenv==1.0.1
 celery==5.4.0
 redis==5.2.1
 requests==2.32.3
-coverage==7.6.10
-factory-boy==3.3.1
 psycopg2-binary==2.9.10
+gunicorn==23.0.0
