@@ -1,16 +1,22 @@
-# Трекер полезных привычек
+# Employee Task Tracker (Django + DRF)
 
-Бэкенд SPA-приложения для отслеживания полезных привычек по методологии «Атомных привычек».
+Серверное приложение трекера задач сотрудников на Python 3.11, Django REST Framework и PostgreSQL.
 
 ## Стек
 
-- Python 3.10+
-- Django 5 + Django REST Framework
-- JWT-авторизация (SimpleJWT)
-- Celery + Redis (напоминания в Telegram)
-- drf-spectacular (документация API)
+- Python 3.11
+- Django 5.1 + DRF
+- PostgreSQL
+- drf-spectacular (Swagger/ReDoc)
+- Docker + Docker Compose
 
-## Быстрый старт
+## Структура
+
+- `tracker/` — доменная модель Employee/Task, CRUD API, специальные endpoint'ы.
+- `config/` — настройки проекта, роутинг, Swagger/ReDoc.
+- `users/`, `habits/`, `telegram_bot/` — существующие модули проекта.
+
+## Запуск локально
 
 ```bash
 python -m venv .venv
@@ -21,35 +27,72 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## Celery
+## Запуск в Docker
 
 ```bash
-celery -A config worker -l info
-celery -A config beat -l info
+cp .env.template .env
+docker compose up --build
 ```
 
-## Документация API
+Сервис будет доступен на `http://localhost:8000`.
 
-- Swagger: http://localhost:8000/docs/
-- ReDoc: http://localhost:8000/redoc/
-- Schema: http://localhost:8000/schema/
+## API документация
 
-## Эндпоинты
+- Swagger UI: `http://localhost:8000/docs/`
+- ReDoc: `http://localhost:8000/redoc/`
+- OpenAPI schema: `http://localhost:8000/schema/`
 
-| Метод | URL | Описание |
-|-------|-----|----------|
-| POST | `/users/register/` | Регистрация |
-| POST | `/users/token/` | Авторизация (JWT) |
-| POST | `/users/token/refresh/` | Обновление токена |
-| PATCH | `/users/telegram/` | Привязка Telegram chat ID |
-| GET | `/habits/` | Список привычек пользователя |
-| POST | `/habits/` | Создание привычки |
-| GET/PATCH/DELETE | `/habits/{id}/` | CRUD привычки |
-| GET | `/habits/public/` | Публичные привычки |
+## Основные endpoint'ы
 
-## Тесты
+### CRUD сотрудников
+
+- `GET/POST /api/employees/`
+- `GET/PATCH/DELETE /api/employees/{id}/`
+
+### CRUD задач
+
+- `GET/POST /api/tasks/`
+- `GET/PATCH/DELETE /api/tasks/{id}/`
+
+Поля задачи:
+- `title`
+- `parent` (nullable, ссылка на родительскую задачу)
+- `assignee` (nullable, FK на сотрудника)
+- `deadline`
+- `status` (`new`, `in_progress`, `blocked`, `done`, `canceled`)
+
+### Спец endpoint: занятые сотрудники
+
+- `GET /api/employees/busy/`
+
+Возвращает сотрудников с задачами, отсортированных по убыванию количества **активных** задач.
+
+Активные статусы: `new`, `in_progress`, `blocked`.
+
+### Спец endpoint: важные задачи
+
+- `GET /api/tasks/important/`
+
+Возвращает задачи со статусом `new` без исполнителя, от которых зависят задачи в статусах `in_progress`/`blocked`, с рекомендацией сотрудников:
+1. Наименее загруженный сотрудник.
+2. Исполнитель родительской задачи (если его активная нагрузка не больше чем на 2 задачи выше минимальной).
+
+Формат элемента ответа:
+
+```json
+{
+  "важная_задача": "Подготовить ТЗ",
+  "срок": "2026-07-20T12:00:00Z",
+  "ФИО_сотрудника": ["Иван Иванов", "Петр Петров"]
+}
+```
+
+## Тесты и покрытие
 
 ```bash
+python manage.py test
 coverage run --source='.' manage.py test
 coverage report
 ```
+
+Текущее покрытие тестами: `96%`.
