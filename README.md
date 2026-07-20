@@ -1,6 +1,6 @@
-# Трекер полезных привычек
+# Employee Task Tracker (Django + DRF)
 
-Бэкенд SPA-приложения для отслеживания полезных привычек по методологии «Атомных привычек».
+Серверное приложение трекера задач сотрудников на Python 3.11, Django REST Framework и PostgreSQL.
 
 ## Стек
 
@@ -155,16 +155,7 @@ push / PR → test → lint → build → deploy (только main)
 
 ## Эндпоинты API
 
-| Метод | URL | Описание |
-|-------|-----|----------|
-| POST | `/users/register/` | Регистрация |
-| POST | `/users/token/` | Авторизация (JWT) |
-| POST | `/users/token/refresh/` | Обновление токена |
-| PATCH | `/users/telegram/` | Привязка Telegram chat ID |
-| GET | `/habits/` | Список привычек пользователя |
-| POST | `/habits/` | Создание привычки |
-| GET/PATCH/DELETE | `/habits/{id}/` | CRUD привычки |
-| GET | `/habits/public/` | Публичные привычки |
+- `GET /api/employees/busy/`
 
 ## Тесты (локально)
 

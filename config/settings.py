@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "habits",
     "users",
     "telegram_bot",
+    "tracker",
 ]
 
 MIDDLEWARE = [
@@ -153,8 +154,8 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Habits Tracker API",
-    "DESCRIPTION": "API для трекера полезных привычек",
+    "TITLE": "Employee Task Tracker API",
+    "DESCRIPTION": "API трекера задач сотрудников",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
