@@ -1,0 +1,4 @@
+-r requirements.txt
+coverage==7.6.10
+factory-boy==3.3.1
+ruff==0.9.4
